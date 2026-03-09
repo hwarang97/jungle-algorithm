@@ -103,7 +103,14 @@ def extended_gcd(a, b):
     # base case: b가 0이면 (a, 1, 0) 반환
     # recursive case
     # 역추적하며 x, y 계산
-    pass
+    if a < b:
+        a, b = b, a
+
+    if b == 0:
+        return (a, 1, 0)
+
+    g, sub_x, sub_y = extended_gcd(b, a % b)
+    return g, sub_y, sub_x - (a // b) * sub_y
 
 
 def is_prime(n):
@@ -120,7 +127,24 @@ def is_prime(n):
     # n이 2보다 작으면 False
     # 2부터 sqrt(n)까지 나누어 떨어지는지 확인
     # 3부터 sqrt(n)까지 홀수만 확인
-    pass
+    import math
+
+    if n < 2:
+        return False
+
+    if n == 2:
+        return True
+
+    if n % 2 == 0:
+        return False
+
+    # 3부터 제곱근 n 까지 홀수들만 검사
+    limit = int(math.sqrt(n)) + 1
+    for num in range(3, limit, 2):
+        if n % num == 0:
+            return False
+
+    return True
 
 
 # 테스트 케이스
@@ -152,14 +176,14 @@ if __name__ == "__main__":
     print()
 
     # 테스트 케이스 4: 확장 유클리드
-    # print("=== 테스트 케이스 4: 확장 유클리드 ===")
-    # a, b = 35, 15
-    # g, x, y = extended_gcd(a, b)
-    # print(f"a = {a}, b = {b}")
-    # print(f"GCD = {g}")
-    # print(f"{a} × {x} + {b} × {y} = {g}")
-    # print(f"검증: {a * x + b * y} = {g}")
-    # print()
+    print("=== 테스트 케이스 4: 확장 유클리드 ===")
+    a, b = 35, 15
+    g, x, y = extended_gcd(a, b)
+    print(f"a = {a}, b = {b}")
+    print(f"GCD = {g}")
+    print(f"{a} × {x} + {b} × {y} = {g}")
+    print(f"검증: {a * x + b * y} = {g}")
+    print()
 
     # 테스트 케이스 5: 소수 판별
     print("=== 테스트 케이스 5: 소수 판별 ===")
