@@ -30,43 +30,42 @@ DFS: [0, 1, 2, 3] (순서는 구현에 따라 다를 수 있음)
 - 깊이 우선으로 방문
 """
 
+
 def dfs(graph, start, visited=None):
     """
     깊이 우선 탐색 (재귀)
-    
+
     Args:
         graph: 그래프 딕셔너리
         start: 현재 정점
         visited: 방문 리스트
-    
+
     Returns:
         방문 순서 리스트
     """
     # TODO: visited가 None이면 초기화
-    pass
-    
+    if not visited:
+        visited = []
+
     # TODO: 현재 정점 방문
-    pass
-    
+    if start not in visited:
+        visited.append(start)
+
     # TODO: 인접한 정점들에 대해 재귀
     ## 방문하지 않은 정점이면 재귀 호출
-    pass
-    
+    for adj in graph[start]:
+        if adj not in visited:
+            dfs(graph, adj, visited)
+
     return visited
+
 
 # 테스트 케이스
 if __name__ == "__main__":
     # 그래프 생성
-    graph = {
-        0: [1, 2],
-        1: [0, 2],
-        2: [0, 1, 3],
-        3: [2]
-    }
-    
+    graph = {0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]}
+
     print("=== DFS (깊이 우선 탐색) ===")
     result = dfs(graph, 0)
     print(f"시작 정점: 0")
     print(f"방문 순서: {result}")
-
-
