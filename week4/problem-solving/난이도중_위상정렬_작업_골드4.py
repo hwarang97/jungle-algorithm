@@ -94,50 +94,93 @@
 # print(get_in_degree_dict(graph))
 # print(get_topological_sort_array_bfs(graph))
 
-import heapq
+# 풀이 1
+# import heapq
+# import sys
+
+# intput = sys.stdin.readline
+
+
+# def parse_input():
+#     """
+#     입력을 받아 graph와 in degree 정보를 반환하는 함수
+#     """
+#     n = int(input().rstrip())
+
+#     graph = {vertex: [] for vertex in range(1, n + 1)}
+#     in_degree = {vertex: 0 for vertex in range(1, n + 1)}
+#     vertex_to_time = {vertex: 0 for vertex in range(1, n + 1)}
+
+#     for i in range(n):
+#         input_arr = list(map(int, input().rstrip().split()))
+#         vertex_to_time[i + 1] = input_arr[0]
+#         in_degree[i + 1] += input_arr[1]
+#         for j in range(input_arr[1]):
+#             graph[input_arr[2 + j]].append(i + 1)
+
+#     return graph, in_degree, vertex_to_time
+
+
+# graph, in_degree, vertex_to_time = parse_input()
+# heap = []
+# time = 0
+
+# # 진입차수가 0인 정점들을 힙에 삽입 (종료시간, 번호)
+# for vertex, degree in in_degree.items():
+#     if degree == 0:
+#         heapq.heappush(heap, (vertex_to_time[vertex] + time, vertex))
+
+# # while heap:
+# #     while heap and heap[0][0] == time:
+# #         current = heapq.heappop(heap)
+# #         for adj_vertex in graph[current[1]]:
+# #             in_degree[adj_vertex] -= 1
+# #             if in_degree[adj_vertex] == 0:
+# #                 heapq.heappush(heap, (vertex_to_time[adj_vertex] + time, adj_vertex))
+
+# #     if heap:
+# #         time += 1
+
+# while heap:
+#     current = heapq.heappop(heap)
+#     time = current[0]
+#     for adj_vertex in graph[current[1]]:
+#         in_degree[adj_vertex] -= 1
+#         if in_degree[adj_vertex] == 0:
+#             heapq.heappush(heap, (vertex_to_time[adj_vertex] + time, adj_vertex))
+
+# sys.stdout.write(f"{time}")
+
+# 풀이 2
 import sys
 
-intput = sys.stdin.readline
+input = sys.stdin.readline
+
+"""
+i번째 작업은 선행 작업들이 완료되면 처리할 수 있다.
+i번째 작업의 선행 작업들은 1 ~ (i - 1) 번째에 있다.
+따라서 선행 작업들 중에서 가장 큰 값만큼 시간이 걸린다고 생각할 수 있다.
+이걸 1번째 작업부터 반복한다면, 작업을 완료하는데 걸리는 시간을 계산할 수 있다.
+"""
 
 
-def parse_input():
+def dp(n):
     """
-    입력을 받아 graph와 in degree 정보를 반환하는 함수
+    i번쨰 작업이 완료되는데 필요한 시간을 계산하는 함수
+    return: list
     """
-    n = int(input().rstrip())
 
-    graph = {vertex: [] for vertex in range(1, n + 1)}
-    in_degree = {vertex: 0 for vertex in range(1, n + 1)}
-    vertex_to_time = {vertex: 0 for vertex in range(1, n + 1)}
-
-    for i in range(n):
+    work_time = [0] * (n + 1)
+    for i in range(1, n + 1):
         input_arr = list(map(int, input().rstrip().split()))
-        vertex_to_time[i + 1] = input_arr[0]
-        in_degree[i + 1] += input_arr[1]
+        work_time[i] += input_arr[0]
+        max_time = 0
         for j in range(input_arr[1]):
-            graph[input_arr[2 + j]].append(i + 1)
+            max_time = max(max_time, work_time[input_arr[2 + j]])
+        work_time[i] += max_time
 
-    return graph, in_degree, vertex_to_time
+    return work_time
 
 
-graph, in_degree, vertex_to_time = parse_input()
-heap = []
-time = 0
-
-# 진입차수가 0인 정점들을 힙에 삽입 (종료시간, 번호)
-for vertex, degree in in_degree.items():
-    if degree == 0:
-        heapq.heappush(heap, (vertex_to_time[vertex] + time, vertex))
-
-while heap:
-    while heap and heap[0][0] == time:
-        current = heapq.heappop(heap)
-        for adj_vertex in graph[current[1]]:
-            in_degree[adj_vertex] -= 1
-            if in_degree[adj_vertex] == 0:
-                heapq.heappush(heap, (vertex_to_time[adj_vertex] + time, adj_vertex))
-
-    if heap:
-        time += 1
-
-sys.stdout.write(f"{time}")
+n = int(input().rstrip())
+sys.stdout.write(f"{max(dp(n))}")
