@@ -6,28 +6,39 @@ import sys
 input = sys.stdin.readline
 
 
-def digit_to_int(num_str):
-    """
-    5자리 10진수를 정수로 변환하는 함수
-    args:
-        x: 0으로 시작할 수 있는 5자리 문자열
-    return:
-        x와 같은 값을 갖는 정수
-    """
-    return int(num_str)
+def lcs(a, b, i, j, dp):
+    if i >= len(a) or j >= len(b):
+        return 0
+
+    elif a[i] == b[j]:
+        if dp[i + 1][j + 1] == -1:
+            dp[i + 1][j + 1] = lcs(a, b, i + 1, j + 1, dp)
+        return 1 + dp[i + 1][j + 1]
+
+    else:
+        if dp[i][j + 1] == -1:
+            dp[i][j + 1] = lcs(a, b, i + 1, j, dp)
+
+        if dp[i + 1][j] == -1:
+            dp[i + 1][j] = lcs(a, b, i, j + 1, dp)
+
+        return max(dp[i][j + 1], dp[i + 1][j])
 
 
-expression = input().strip()
-total = 0
-sign = 1
-minus_position = -1
-for i in range(len(expression)):
-    if expression[i] == "-":
-        total += sign * sum(
-            map(digit_to_int, expression[minus_position + 1 : i].split("+"))
-        )
-        sign = -1
-        minus_position = i
+def lcs_iter(a, b, dp):
+    for row in range(1, len(a) + 1):
+        for col in range(1, len(b) + 1):
+            if a[row - 1] == b[col - 1]:
+                dp[row][col] = dp[row - 1][col - 1] + 1
+            else:
+                dp[row][col] = max(dp[row - 1][col], dp[row][col - 1])
 
-total += sign * sum(map(digit_to_int, expression[minus_position + 1 :].split("+")))
-print(total)
+    return dp[len(a)][len(b)]
+
+
+a = input().rstrip()
+b = input().rstrip()
+
+dp = [[0 for _ in range(len(b) + 1)] for _ in range(len(a) + 1)]
+
+print(lcs_iter(a, b, dp))
